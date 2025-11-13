@@ -40,8 +40,10 @@ export default function InstitutionProfile() {
   const router = useRouter();
 
 
-  const API_BASE = "http://localhost:4000";
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
   const PLACEHOLDER = "https://placehold.co/400x300?text=No+Image";
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 
   // Safe function to build image URLs with fallback
   const buildImg = (path) => {
@@ -49,7 +51,7 @@ export default function InstitutionProfile() {
     const i = path.indexOf("uploads");
     if (i === -1) return path.startsWith("http") ? path : PLACEHOLDER;
     const rel = path.substring(i).replace(/\\/g, "/");
-    return `${API_BASE}/${rel}`;
+    return `${baseUrl}/${rel}`;
   };
 
   const handleExpertClick = (expertID) => {
@@ -74,7 +76,7 @@ export default function InstitutionProfile() {
     const fetchInstitution = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE}/api/booking/customers/experts-institutions`);
+        const res = await fetch(`${backendUrl}/experts-institutions`);
         const data = await res.json();
         const found = data.institutions?.find((i) => i._id === institutionID);
         if (found) {
@@ -96,7 +98,7 @@ export default function InstitutionProfile() {
 
   const fetchFormsAndBlogs = async () => {
     try {
-      const response = await fetch(`${API_BASE}/api/booking/customers/${institutionID}/blogs-forms`);
+      const response = await fetch(`${backendUrl}/${institutionID}/blogs-forms`);
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       setForms(flattenForms(data));
