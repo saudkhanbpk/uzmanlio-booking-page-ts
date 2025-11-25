@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+// import { useParams } from "next/navigation";
+// const params = useParams();
 
 /**
  * Handles booking creation (proxy to backend)
@@ -6,7 +8,7 @@ import { NextResponse } from "next/server";
 export async function POST(request, context) {
   try {
     // ✅ Safely await params
-    const { customerId } = await context.params;
+    const customerId = '68e7954a320f4a8884336346';
     console.log("🌳 Received customerId:", customerId);
 
     // ✅ Parse incoming form data
@@ -26,11 +28,11 @@ export async function POST(request, context) {
     }
 
     // ✅ Generate or reuse customer ID
-    const finalCustomerId =
-      bookingData.customerId ||
-      customerId ||
-      crypto.randomUUID?.() ||
-      Math.random().toString(36).substring(2, 15);
+    const finalCustomerId = customerId;
+    // bookingData.customerId ||
+    // customerId ||
+    // crypto.randomUUID?.() ||
+    // Math.random().toString(36).substring(2, 15);
 
     // ✅ Extract uploaded files
     const files = formData.getAll("files");
@@ -47,6 +49,7 @@ export async function POST(request, context) {
         ...bookingData,
         customerId: finalCustomerId,
         timestamp: new Date().toISOString(),
+        // expertId: params.expertID,
       })
     );
 
@@ -67,7 +70,7 @@ export async function POST(request, context) {
     }
 
     // ✅ Use environment variable for backend URL
-   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+    const backendUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/${finalCustomerId}/form`;
 
 
     const backendResponse = await fetch(backendUrl, {
@@ -77,6 +80,7 @@ export async function POST(request, context) {
 
     // ✅ Handle backend errors gracefully
     if (!backendResponse.ok) {
+      console.log("Backend response:", backendResponse)
       const errorData = await backendResponse.json().catch(() => ({}));
       console.error("❌ Backend error:", errorData);
 

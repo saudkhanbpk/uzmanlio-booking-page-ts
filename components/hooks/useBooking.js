@@ -5,8 +5,10 @@ import axios from "axios";
 import { useBookingContext } from "@/components/context/BookingContext";
 import { useValidation } from "./useValidation";
 import React from "react";
+import { useParams } from "next/navigation";
 
 export const useBooking = () => {
+  const params = useParams();
   const router = useRouter();
   const {
     bookingState,
@@ -47,8 +49,7 @@ export const useBooking = () => {
         });
 
         alert(
-          `Kupon başarıyla uygulandı! ${data.value} ${
-            data.type === "percentage" ? "%" : "₺"
+          `Kupon başarıyla uygulandı! ${data.value} ${data.type === "percentage" ? "%" : "₺"
           } indirim`
         );
       } else {
@@ -164,6 +165,7 @@ export const useBooking = () => {
         total,
         termsAccepted: bookingState.termsAccepted,
         providerId: profile?._id,
+        expertId: params.expertID,
         providerName: profile
           ? `${profile.information.name} ${profile.information.surname}`
           : "",
@@ -190,8 +192,7 @@ export const useBooking = () => {
       console.log("✅ Booking result:", result);
 
       alert(
-        `✅ Rezervasyon başarıyla oluşturuldu(${
-          result.bookingId || customerId
+        `✅ Rezervasyon başarıyla oluşturuldu(${result.bookingId || customerId
         })! for ${profile?.information.name} ${profile?.information.surname}`
       );
       // router.push(`/booking/success?id=${result.bookingId || customerId}`);
