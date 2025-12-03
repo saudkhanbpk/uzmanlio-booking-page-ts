@@ -22,6 +22,7 @@ export const ServiceSelection = () => {
   const [serviceType, setServiceType] = React.useState("bireysel");
 
   if (!profile) return null;
+  console.log("profile:", profile);
 
   // ✅ Filter services and packages
   const bireyselServices = React.useMemo(
@@ -84,12 +85,14 @@ export const ServiceSelection = () => {
 
   // utils/price.js
   function finalPrice(item) {
-    const discount = 20;
     const price = parseInt(item.price);
-    if (!discount || discount <= 0) return parseInt(price);
-    const discounted = price - (price * discount) / 100;
-    return Math.round(discounted);
+    const discount = item.discount || 0;
+
+    if (!discount || discount <= 0) return price;
+
+    return Math.round(price - (price * discount) / 100);
   }
+
 
   // ✅ Render cards
   const renderCards = (list, type) => (
@@ -108,11 +111,10 @@ export const ServiceSelection = () => {
           return (
             <div
               key={item.id}
-              className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                isSelected
-                  ? "border-primary bg-green-50"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`p-4 border rounded-lg cursor-pointer transition-colors ${isSelected
+                ? "border-primary bg-green-50"
+                : "border-gray-200 hover:border-gray-300"
+                }`}
               onClick={() => handleSelect(item.id, type)}
             >
               <div className="flex justify-between items-start">
@@ -124,8 +126,8 @@ export const ServiceSelection = () => {
                       {(item.meetingType === "1-1" ||
                         item.meetingType === "bireysel" ||
                         item.meetingType === "face-to-face") && (
-                        <p className="text-sm text-gray-600 mt-1">{item.duration} dakika</p>
-                      )}
+                          <p className="text-sm text-gray-600 mt-1">{item.duration} dakika</p>
+                        )}
 
                       {item.meetingType === "grup" && (
                         <>
@@ -170,17 +172,17 @@ export const ServiceSelection = () => {
                   )}
                 </div>
 
-                {!item.discount > 0 ? (
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{finalPrice(item)} TL</Badge>
-                  </div>
+                {item.discount && item.discount > 0 ? (
+                  <Badge variant="default">{finalPrice(item)} TL</Badge>
                 ) : (
                   <Badge variant="default">{parseInt(item.price)} TL</Badge>
                 )}
+
               </div>
 
               <div className="mt-2 flex items-center gap-2">
                 <Button
+                  type="button"
                   variant="outline"
                   size="sm"
                   onClick={(e) => {

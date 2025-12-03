@@ -1,9 +1,10 @@
 "use client";
 
 import React from 'react';
-import { 
-  Star, MapPin, Phone, Mail, GraduationCap, Briefcase, Award, FileCheck, 
-  ChevronLeft, ChevronRight, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, User 
+import {
+  Star, MapPin, Phone, Mail, GraduationCap, Briefcase, Award, FileCheck,
+  ChevronLeft, ChevronRight, Globe, Instagram, Facebook, Twitter, Youtube, Linkedin, User,
+  File, FileText, FileImage, FileVideo, Download, Eye
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -186,6 +187,71 @@ export const ProviderCard = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Documents */}
+          {profile.galleryFiles && profile.galleryFiles.length > 0 && (
+            <div className="mb-4">
+              <h5 className="font-medium text-sm mb-2 flex items-center gap-2">
+                <File className="w-4 h-4 text-blue-500" />
+                Dokümanlar
+              </h5>
+              <div className="space-y-2">
+                {profile.galleryFiles.filter(file => file.isVisible).map((file) => {
+                  const getFileIcon = (fileType) => {
+                    switch (fileType) {
+                      case 'image': return <FileImage className="w-4 h-4 text-purple-500" />;
+                      case 'video': return <FileVideo className="w-4 h-4 text-red-500" />;
+                      case 'document': return <FileText className="w-4 h-4 text-blue-500" />;
+                      default: return <File className="w-4 h-4 text-gray-500" />;
+                    }
+                  };
+
+                  // Build file URL using the same pattern as institution page
+                  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL || '';
+                  const filePath = file.filePath || file.fileUrl || '';
+
+                  let fileUrl = '';
+                  if (filePath.startsWith('http')) {
+                    fileUrl = filePath;
+                  } else {
+                    const i = filePath.indexOf('uploads');
+                    if (i !== -1) {
+                      const rel = filePath.substring(i).replace(/\\/g, '/');
+                      fileUrl = `${baseUrl}/${rel}`;
+                    } else {
+                      fileUrl = filePath;
+                    }
+                  }
+
+                  return (
+                    <div key={file.id} className="bg-gray-50 rounded-lg p-2 border flex items-center justify-between hover:bg-gray-100 transition-colors">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        {getFileIcon(file.fileType)}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-gray-800 truncate">
+                            {file.originalName || file.filename}
+                          </p>
+                          {file.description && (
+                            <p className="text-xs text-gray-500 truncate">{file.description}</p>
+                          )}
+                        </div>
+                      </div>
+                      <a
+                        href={fileUrl}
+                        download={file.originalName || file.filename}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1 hover:bg-gray-200 rounded transition-colors flex-shrink-0"
+                        title="İndir"
+                      >
+                        <Eye className="w-3 h-3 text-gray-600" />
+                      </a>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

@@ -156,12 +156,12 @@ export default function InstitutionProfile() {
   return (
     <div className="min-h-screen bg-white">
       {/* Cover Image */}
-      <div className="bg-[#C8E53F] py-4 md:py-6">
-        <div className="container">
+      <div className="w-full h-64 md:h-86">
+        <div className="w-full h-full">
           <img
             src={buildImg(institution.officialAxe)}
             alt="Cover"
-            className="w-full max-h-96 object-cover rounded-lg shadow-lg"
+            className="w-full h-full object-cover shadow-lg"
             onError={(e) => e.currentTarget.src = "https://placehold.co/1200x300?text=Cover+Image"}
           />
         </div>
