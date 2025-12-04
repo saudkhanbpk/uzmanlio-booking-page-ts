@@ -82,7 +82,11 @@ export const ProviderCard = () => {
               return (
                 <a
                   key={social.name}
-                  href={social.url}
+                  href={
+                    social.url.startsWith("http://") || social.url.startsWith("https://")
+                      ? social.url
+                      : `https://${social.url}`
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`transition-colors ${social.color}`}
@@ -103,7 +107,7 @@ export const ProviderCard = () => {
           <p className="text-sm text-gray-600 leading-relaxed mb-4">{profile.information.about}</p>
 
           {/* Education */}
-          {profile.resume.education.length > 0 && (
+          {profile.resume?.education?.length > 0 && (
             <div className="mb-4">
               <h5 className="font-medium text-sm mb-2 flex items-center gap-2">
                 <GraduationCap className="w-4 h-4 text-purple-500" />
@@ -113,7 +117,36 @@ export const ProviderCard = () => {
                 {profile.resume.education.map((edu) => (
                   <li key={edu.id} className="leading-relaxed">
                     • {edu.name}, {edu.department} ({edu.graduationYear})
+
                   </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Skills */}
+          {profile.skills?.length > 0 && (
+            <div className="mb-4">
+              <h5 className="font-medium text-sm mb-2 flex items-center gap-2">
+                <GraduationCap className="w-4 h-4 text-purple-500" />
+                Uzmanlık Alanlarım
+              </h5>
+              <ul className="text-xs text-gray-600 space-y-1">
+                {profile.skills.map((skill) => (
+                  <li key={skill.id} className="leading-relaxed flex flex-col">
+                    <div className="flex items-center justify-between">
+                      <span>• {skill.name}</span>
+                      <span className="text-sm text-gray-600">{skill.level}%</span>
+                    </div>
+
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                      <div
+                        className="bg-green-600 h-2 rounded-full"
+                        style={{ width: `${skill.level}%` }}
+                      ></div>
+                    </div>
+                  </li>
+
                 ))}
               </ul>
             </div>

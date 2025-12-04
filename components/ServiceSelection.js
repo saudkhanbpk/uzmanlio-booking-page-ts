@@ -160,14 +160,14 @@ export const ServiceSelection = () => {
                       <p className="text-sm text-gray-600">
                         {item.duration} dakika x {item.sessionsIncluded} seans
                       </p>
-                      {item.price && (
+                      {item.discount && item.discount > 0 ? (
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-gray-500 line-through">{item.price} TL</span>
                           <Badge variant="destructive" className="text-xs">
-                            %{!item.discount ? Math.round(20.4) : 0} İndirim
+                            %{item.discount} İndirim
                           </Badge>
                         </div>
-                      )}
+                      ) : (<span className="text-xs text-gray-500">{item.price} TL</span>)}
                     </>
                   )}
                 </div>
