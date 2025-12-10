@@ -20,13 +20,13 @@ export const useValidation = () => {
       }
     }
 
-    if (!clientInfo.firstName.trim()) {
+    if (!clientInfo.firstName?.trim()) {
       errors.firstName = "Ad alanı zorunludur";
     }
-    if (!clientInfo.lastName.trim()) {
+    if (!clientInfo.lastName?.trim()) {
       errors.lastName = "Soyad alanı zorunludur";
     }
-    if (!clientInfo.email.trim()) {
+    if (!clientInfo.email?.trim()) {
       errors.email = "E-posta alanı zorunludur";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientInfo.email)) {
       errors.email = "Geçerli bir e-posta adresi girin";

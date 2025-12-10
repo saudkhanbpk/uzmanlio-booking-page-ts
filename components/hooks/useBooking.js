@@ -125,6 +125,7 @@ export const useBooking = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
 
+
     if (!validateForm()) {
       alert("Lütfen tüm zorunlu alanları doldurun");
       return;
@@ -190,6 +191,31 @@ export const useBooking = () => {
 
       const result = await response.json();
       console.log("✅ Booking result:", result);
+      updateBookingState({
+        serviceType: "",
+        selectedService: { serviceId: "", serviceTitle: "" },
+        packageType: "",
+        selectedPackage: { packageId: "", packageTitle: "" },
+        selectedDate: "",
+        selectedTime: "",
+        couponCode: "",
+        appliedCoupon: null,
+        clientInfo: {
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+        },
+        paymentInfo: {
+          cardNumber: "",
+          cardExpiry: "",
+          cardCvv: "",
+          cardHolderName: "",
+        },
+        termsAccepted: false,
+        uploadedFiles: [],
+        orderNotes: "",
+      })
 
       alert(
         `✅ Rezervasyon başarıyla oluşturuldu(${result.bookingId || customerId
