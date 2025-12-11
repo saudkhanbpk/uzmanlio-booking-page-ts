@@ -6,6 +6,7 @@ import { useBookingContext } from "@/components/context/BookingContext";
 import { useValidation } from "./useValidation";
 import React from "react";
 import { useParams } from "next/navigation";
+import Swal from "sweetalert2";
 
 export const useBooking = () => {
   const params = useParams();
@@ -48,12 +49,19 @@ export const useBooking = () => {
           },
         });
 
-        alert(
-          `Kupon başarıyla uygulandı! ${data.value} ${data.type === "percentage" ? "%" : "₺"
-          } indirim`
-        );
+        Swal.fire({
+          icon: "success",
+          title: "Kupon Uygulandı!",
+          text: `${data.value} ${data.type === "percentage" ? "%" : "₺"} indirim`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
       } else {
-        alert(data?.error || data?.message || "Geçersiz kupon kodu");
+        Swal.fire({
+          icon: "error",
+          title: "Hata",
+          text: data?.error || data?.message || "Geçersiz kupon kodu",
+        });
       }
     } catch (error) {
       console.error("❌ Coupon validation error:", error);
@@ -64,7 +72,11 @@ export const useBooking = () => {
         error.message ||
         "Kupon doğrulanırken bir hata oluştu";
 
-      alert(backendError);
+      Swal.fire({
+        icon: "error",
+        title: "Hata",
+        text: backendError,
+      });
     } finally {
       setApplyingCoupon(false);
     }
@@ -125,13 +137,28 @@ export const useBooking = () => {
   const handleBooking = async (e) => {
     e.preventDefault();
 
-
     if (!validateForm()) {
-      alert("Lütfen tüm zorunlu alanları doldurun");
+      Swal.fire({
+        icon: "warning",
+        title: "Eksik Bilgiler",
+        text: "Lütfen tüm zorunlu alanları doldurun",
+      });
       return;
     }
 
     setSubmitting(true);
+
+    // Show loading spinner
+    Swal.fire({
+      title: "Rezervasyon Oluşturuluyor...",
+      text: "Lütfen bekleyin",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
     try {
       const formData = new FormData();
@@ -191,6 +218,7 @@ export const useBooking = () => {
 
       const result = await response.json();
       console.log("✅ Booking result:", result);
+
       updateBookingState({
         serviceType: "",
         selectedService: { serviceId: "", serviceTitle: "" },
@@ -215,16 +243,32 @@ export const useBooking = () => {
         termsAccepted: false,
         uploadedFiles: [],
         orderNotes: "",
-      })
+      });
 
-      alert(
-        `✅ Rezervasyon başarıyla oluşturuldu(${result.bookingId || customerId
-        })! for ${profile?.information.name} ${profile?.information.surname}`
-      );
+      // Show success message
+      Swal.fire({
+        icon: "success",
+        title: "Rezervasyon Başarılı! 🎉",
+        html: `
+          <p>Rezervasyon numaranız: <strong>${result.bookingId || customerId}</strong></p>
+          <p>${profile?.information.name} ${profile?.information.surname} için rezervasyonunuz oluşturuldu.</p>
+        `,
+        confirmButtonText: "Tamam",
+        confirmButtonColor: "#10B981",
+      });
+
       // router.push(`/booking/success?id=${result.bookingId || customerId}`);
     } catch (error) {
       console.error("❌ Booking error:", error);
-      alert("Rezervasyon oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+
+      // Show error message
+      Swal.fire({
+        icon: "error",
+        title: "Hata Oluştu",
+        text: "Rezervasyon oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.",
+        confirmButtonText: "Tamam",
+        confirmButtonColor: "#EF4444",
+      });
     } finally {
       setSubmitting(false);
     }
