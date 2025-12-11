@@ -7,14 +7,14 @@ import { InstitutionProvider } from "@/components/context/InstitutionContext";
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${montserrat.variable} font-sans`}>
-        <InstitutionProvider> 
-        <ExpertProvider>
-        {children}
-        </ExpertProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${montserrat.variable} font-sans`} suppressHydrationWarning>
+        <InstitutionProvider>
+          <ExpertProvider>
+            {children}
+          </ExpertProvider>
         </InstitutionProvider>
-        </body>
+      </body>
     </html>
   );
 }
