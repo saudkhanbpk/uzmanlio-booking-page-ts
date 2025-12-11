@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { BookingProvider } from "@/components/context/BookingContext";
 import { useBookingContext } from "@/components/context/BookingContext";
 import { useProviderData } from "@/components/hooks/useProviderData";
@@ -15,10 +15,60 @@ import { EventsSection } from "@/components/EventsSection";
 import { ServiceDetailsDialog } from "@/components/ServiceDetailsDialog";
 import BlogsSection from "@/components/BlogsSection";
 import { useParams } from "next/navigation";
+import {
+  trackExpertProfileView,
+  trackScrollDepth,
+  trackTimeOnPage,
+  trackCTAClick
+} from "@/components/GoogleAnalytics";
 
 function BookingContent() {
-  const {expertID} = useParams();
+  const { expertID, institutionID } = useParams();
   const { loading, profile, bookingState } = useBookingContext();
+  const startTimeRef = useRef(Date.now());
+  const scrollTrackedRef = useRef({ 25: false, 50: false, 75: false, 100: false });
+
+  // Track expert profile view when profile is loaded
+  useEffect(() => {
+    if (profile && expertID) {
+      const expertName = `${profile.information?.name || ''} ${profile.information?.surname || ''}`.trim();
+      trackExpertProfileView(expertID, expertName);
+    }
+  }, [profile, expertID]);
+
+  // Track scroll depth
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+
+      const thresholds = [25, 50, 75, 100];
+      thresholds.forEach(threshold => {
+        if (scrollPercent >= threshold && !scrollTrackedRef.current[threshold]) {
+          scrollTrackedRef.current[threshold] = true;
+          trackScrollDepth(threshold, 'expert_profile', expertID);
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [expertID]);
+
+  // Track time on page when leaving
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000);
+      trackTimeOnPage(timeSpent, 'expert_profile', expertID);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      handleBeforeUnload(); // Track when component unmounts
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [expertID]);
 
   if (loading) {
     console.log("Loading provider data...");
