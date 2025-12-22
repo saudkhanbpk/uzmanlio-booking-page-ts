@@ -99,7 +99,7 @@ function BookingContent() {
   let showDateTimePicker = false;
   if (profile && bookingState.selectedService) {
     const foundService = profile.services.find(
-      (s) => s.id === bookingState.selectedService.serviceId
+      (s) => s._id === bookingState.selectedService.serviceId
     );
     showDateTimePicker = !!(foundService && foundService.meetingType === "1-1");
   }

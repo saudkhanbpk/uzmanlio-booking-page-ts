@@ -123,11 +123,11 @@ export const useBooking = () => {
     const { serviceType, selectedService, selectedPackage } = bookingState;
 
     if (selectedService.serviceId) {
-      return profile.services.find((s) => s.id === selectedService.serviceId);
+      return profile.services.find((s) => s._id === selectedService.serviceId);
     }
 
     if (selectedPackage.packageId) {
-      return profile.packages.find((p) => p.id === selectedPackage.packageId);
+      return profile.packages.find((p) => p._id === selectedPackage.packageId);
     }
 
     return null;
@@ -174,6 +174,13 @@ export const useBooking = () => {
         : bookingState.selectedTime;
 
       const selectedServiceData = getSelectedServiceData();
+
+      // Sanitize offering to ensure the backend uses the correct ObjectId if it looks at the 'id' field
+      const sanitizedOffering = selectedServiceData ? {
+        ...selectedServiceData,
+        id: selectedServiceData._id
+      } : null;
+
       const { subtotal, discount, total } = calculatePricing();
 
       const bookingData = {
@@ -181,7 +188,7 @@ export const useBooking = () => {
         selectedService: bookingState.selectedService,
         packageType: bookingState.packageType,
         selectedPackage: bookingState.selectedPackage,
-        selectedOffering: selectedServiceData,
+        selectedOffering: sanitizedOffering,
         date: finalDate,
         time: finalTime,
         clientInfo: bookingState.clientInfo,
