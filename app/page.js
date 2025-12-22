@@ -25,14 +25,14 @@ export default function LandingPage() {
   useEffect(() => {
     async function fetchData() {
       //First check the context
-      if (Experts.length > 0 && Institutions.length > 0) {
-        setexperts(Experts);
-        setinstitutions(Institutions);
-        setLoading(false);
-        return;
-      }
+      // if (Experts.length > 0 && Institutions.length > 0) {
+      //   setexperts(Experts);
+      //   setinstitutions(Institutions);
+      //   setLoading(false);
+      //   return;
+      // }
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
       try {
         setLoading(true);
@@ -45,7 +45,7 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
         // Filter experts
         const filteredExperts = (data.experts || []).filter(
-          (expert) => expert.subscription?.seats <= 1
+          (expert) => expert.subscription?.plantype === "individual"
         );
 
         setexperts(filteredExperts || []);
@@ -144,22 +144,20 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
         <div className="flex justify-center mb-12 gap-3">
           <button
             onClick={() => setActiveTab("institutions")}
-            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${
-              activeTab === "institutions"
-                ? "bg-emerald-600 text-white shadow-lg scale-105"
-                : "bg-white text-gray-700 shadow hover:shadow-md"
-            }`}
+            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === "institutions"
+              ? "bg-emerald-600 text-white shadow-lg scale-105"
+              : "bg-white text-gray-700 shadow hover:shadow-md"
+              }`}
           >
             <Building2 size={20} />
             Institutions
           </button>
           <button
             onClick={() => setActiveTab("experts")}
-            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${
-              activeTab === "experts"
-                ? "bg-emerald-600 text-white shadow-lg scale-105"
-                : "bg-white text-gray-700 shadow hover:shadow-md"
-            }`}
+            className={`px-8 py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === "experts"
+              ? "bg-emerald-600 text-white shadow-lg scale-105"
+              : "bg-white text-gray-700 shadow hover:shadow-md"
+              }`}
           >
             <Award size={20} />
             Experts

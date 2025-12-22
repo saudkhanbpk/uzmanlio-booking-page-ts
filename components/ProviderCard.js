@@ -115,9 +115,8 @@ export const ProviderCard = () => {
               </h5>
               <ul className="text-xs text-gray-600 space-y-1">
                 {profile.resume.education.map((edu) => (
-                  <li key={edu.id} className="leading-relaxed">
-                    • {edu.name}, {edu.department} ({edu.graduationYear})
-
+                  <li key={edu.id} className="leading-relaxed break-words">
+                    • {edu.name}{edu.department ? `, ${edu.department}` : ""} ({edu.graduationYear})
                   </li>
                 ))}
               </ul>
@@ -134,9 +133,9 @@ export const ProviderCard = () => {
               <ul className="text-xs text-gray-600 space-y-1">
                 {profile.skills.map((skill) => (
                   <li key={skill.id} className="leading-relaxed flex flex-col">
-                    <div className="flex items-center justify-between">
-                      <span>• {skill.name}</span>
-                      <span className="text-sm text-gray-600">{skill.level}%</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="break-words">• {skill.name}</span>
+                      <span className="text-sm text-gray-600 flex-shrink-0">{skill.level}%</span>
                     </div>
 
                     <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
@@ -161,8 +160,8 @@ export const ProviderCard = () => {
               </h5>
               <ul className="text-xs text-gray-600 space-y-1">
                 {profile.experience.map((exp) => (
-                  <li key={exp.id} className="leading-relaxed">
-                    • {exp.position} @ {exp.company} ({exp.start} - {exp.stillWork ? "Devam ediyor" : exp.end})
+                  <li key={exp.id} className="leading-relaxed break-all">
+                    • {exp.position} {exp.company ? `@ ${exp.company}` : ""} ({exp.start} - {exp.stillWork ? "Devam ediyor" : exp.end})
                   </li>
                 ))}
               </ul>
@@ -178,8 +177,8 @@ export const ProviderCard = () => {
               </h5>
               <ul className="text-xs text-gray-600 space-y-1">
                 {profile.certificates.map((cert) => (
-                  <li key={cert.id} className="leading-relaxed">
-                    • {cert.name} ({cert.company})
+                  <li key={cert.id} className="leading-relaxed break-words">
+                    • {cert.name} {cert.company ? `(${cert.company})` : ""}
                   </li>
                 ))}
               </ul>
