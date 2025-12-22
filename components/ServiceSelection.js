@@ -49,7 +49,7 @@ export const ServiceSelection = () => {
   // ✅ Handle selection
   const handleSelect = (id, type) => {
     if (type === "service") {
-      const selectedItem = profile.services.find((s) => s.id === id);
+      const selectedItem = profile.services.find((s) => s._id === id);
       if (!selectedItem) return;
 
       const meetingType = selectedItem.meetingType;
@@ -57,7 +57,7 @@ export const ServiceSelection = () => {
       updateBookingState({
         serviceType: meetingType,
         selectedService: {
-          serviceId: selectedItem.id,
+          serviceId: selectedItem._id,
           serviceTitle: selectedItem.title,
         },
         packageType: "",
@@ -66,13 +66,13 @@ export const ServiceSelection = () => {
         selectedTime: meetingType === "1-1" ? bookingState.selectedTime : "",
       });
     } else {
-      const selectedItem = profile.packages.find((p) => p.id === id);
+      const selectedItem = profile.packages.find((p) => p._id === id);
       if (!selectedItem) return;
 
       updateBookingState({
         packageType: selectedItem.meetingType || "",
         selectedPackage: {
-          packageId: selectedItem.id,
+          packageId: selectedItem._id,
           packageTitle: selectedItem.title,
         },
         serviceType: "",
@@ -105,17 +105,17 @@ export const ServiceSelection = () => {
         list.map((item) => {
           const isSelected =
             type === "service"
-              ? bookingState.selectedService.serviceId === item.id
-              : bookingState.selectedPackage.packageId === item.id;
+              ? bookingState.selectedService.serviceId === item._id
+              : bookingState.selectedPackage.packageId === item._id;
 
           return (
             <div
-              key={item.id}
+              key={item._id}
               className={`p-4 border rounded-lg cursor-pointer transition-colors ${isSelected
                 ? "border-primary bg-green-50"
                 : "border-gray-200 hover:border-gray-300"
                 }`}
-              onClick={() => handleSelect(item.id, type)}
+              onClick={() => handleSelect(item._id, type)}
             >
               <div className="flex justify-between items-start">
                 <div className={type === "package" ? "space-y-2" : ""}>
@@ -187,7 +187,7 @@ export const ServiceSelection = () => {
                   size="sm"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setServiceDetailsDialogId(item.id);
+                    setServiceDetailsDialogId(item._id);
                     setServiceDetailsDialogOpen(true);
                   }}
                 >

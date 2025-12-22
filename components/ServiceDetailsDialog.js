@@ -202,9 +202,9 @@ export const ServiceDetailsDialog = () => {
   let selectedServiceData = null;
 
   if (profile && serviceDetailsDialogId) {
-    selectedServiceData = profile.services.find((s) => s.id === serviceDetailsDialogId);
+    selectedServiceData = profile.services.find((s) => s._id === serviceDetailsDialogId);
     if (!selectedServiceData) {
-      selectedServiceData = profile.packages.find((p) => p.id === serviceDetailsDialogId);
+      selectedServiceData = profile.packages.find((p) => p._id === serviceDetailsDialogId);
     }
   }
 
