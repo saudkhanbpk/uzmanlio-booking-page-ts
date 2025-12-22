@@ -1,14 +1,15 @@
-
 import { montserrat } from "./fonts";
 import "./globals.css";
 import { ExpertProvider } from "@/components/context/ExpertContext";
 import { InstitutionProvider } from "@/components/context/InstitutionContext";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${montserrat.variable} font-sans`} suppressHydrationWarning>
+    <html lang="en">
+      <body className={`${montserrat.variable} font-sans`}>
+        <GoogleAnalytics />
         <InstitutionProvider>
           <ExpertProvider>
             {children}

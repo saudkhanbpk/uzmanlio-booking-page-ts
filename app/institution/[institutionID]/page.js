@@ -1,6 +1,6 @@
 "use client";
 // src/pages/InstitutionProfile.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from 'next/navigation';
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge.js";
@@ -8,6 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useInstitution } from "@/components/context/InstitutionContext";
+import {
+  trackInstitutionProfileView,
+  trackScrollDepth,
+  trackTimeOnPage,
+  trackCTAClick
+} from "@/components/GoogleAnalytics";
 import {
   Building,
   Copy,
@@ -39,10 +45,57 @@ export default function InstitutionProfile() {
   const [blogPosts, setBlogPosts] = useState([]); // Initialize blogPosts state
   const router = useRouter();
 
+  // Analytics tracking refs
+  const startTimeRef = useRef(Date.now());
+  const scrollTrackedRef = useRef({ 25: false, 50: false, 75: false, 100: false });
+  const profileTrackedRef = useRef(false);
+
 
   const baseUrl = process.env.NEXT_PUBLIC_BACKEND_BASE_URL;
   const PLACEHOLDER = "https://placehold.co/400x300?text=No+Image";
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+  // Track institution profile view when loaded
+  useEffect(() => {
+    if (institution && institutionID && !profileTrackedRef.current) {
+      profileTrackedRef.current = true;
+      trackInstitutionProfileView(institutionID, institution.name);
+    }
+  }, [institution, institutionID]);
+
+  // Track scroll depth
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+
+      const thresholds = [25, 50, 75, 100];
+      thresholds.forEach(threshold => {
+        if (scrollPercent >= threshold && !scrollTrackedRef.current[threshold]) {
+          scrollTrackedRef.current[threshold] = true;
+          trackScrollDepth(threshold, 'institution_profile', institutionID);
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [institutionID]);
+
+  // Track time on page when leaving
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000);
+      trackTimeOnPage(timeSpent, 'institution_profile', institutionID);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      handleBeforeUnload(); // Track when component unmounts
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [institutionID]);
 
 
   // Safe function to build image URLs with fallback
@@ -55,6 +108,7 @@ export default function InstitutionProfile() {
   };
 
   const handleExpertClick = (expertID) => {
+    trackCTAClick('view_team_member', institutionID);
     router.push(`/expert/${expertID}`);
   }
 
@@ -146,6 +200,7 @@ export default function InstitutionProfile() {
     try {
       await navigator.clipboard.writeText(companyUrl);
       setCopied(true);
+      trackCTAClick('copy_share_url', institutionID);
       setTimeout(() => setCopied(false), 2000);
     } catch { }
   };
