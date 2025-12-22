@@ -7,12 +7,14 @@ export async function POST(request, context) {
 
     // 🟡 Call your backend
     const response = await fetch(
-      `${backendUrl}}/${customerId}/validate-coupon`,
+      `${backendUrl}/${customerId}/validate-coupon`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "X-CSRF-Token": request.headers.get('X-CSRF-Token')
         },
+        credentials: "include",
         body: JSON.stringify({
           customerId,
           couponCode,

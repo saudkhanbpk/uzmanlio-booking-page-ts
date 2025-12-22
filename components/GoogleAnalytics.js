@@ -3,6 +3,7 @@
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
+import DOMPurify from 'dompurify';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID;
 
@@ -99,10 +100,10 @@ function AnalyticsTracker() {
     if (!GA_MEASUREMENT_ID) return;
 
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : '');
-    
+
     // Extract expert ID or institution ID from URL for custom tracking
     let additionalParams = {};
-    
+
     if (pathname.includes('/expert/')) {
       const expertId = pathname.split('/expert/')[1]?.split('/')[0];
       if (expertId) {
@@ -141,13 +142,13 @@ export default function GoogleAnalytics() {
         strategy="afterInteractive"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
       />
-      
+
       {/* Initialize Google Analytics */}
       <Script
         id="google-analytics-init"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
-          __html: `
+          __html: DOMPurify.sanitize(`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
@@ -156,10 +157,10 @@ export default function GoogleAnalytics() {
               send_page_view: false,
               anonymize_ip: true
             });
-          `
+          `)
         }}
       />
-      
+
       {/* Page view tracker with Suspense boundary */}
       <Suspense fallback={null}>
         <AnalyticsTracker />

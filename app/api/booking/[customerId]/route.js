@@ -76,6 +76,10 @@ export async function POST(request, context) {
     const backendResponse = await fetch(backendUrl, {
       method: "POST",
       body: backendFormData,
+      headers: {
+        'X-CSRF-Token': request.headers.get('X-CSRF-Token')
+      },
+      credentials: 'include'
     });
 
     // ✅ Handle backend errors gracefully

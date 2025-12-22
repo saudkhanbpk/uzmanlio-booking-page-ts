@@ -1,5 +1,6 @@
 import React, { createContext, useContext, forwardRef, useMemo } from "react";
 import * as RechartsPrimitive from "recharts";
+import DOMPurify from "dompurify";
 import { cn } from "@/lib/utils";
 
 // Format: { THEME_NAME: CSS_SELECTOR }
@@ -50,18 +51,18 @@ const ChartStyle = ({ id, config }) => {
   return (
     <style
       dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
+        __html: DOMPurify.sanitize(Object.entries(THEMES)
           .map(([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
-  .map(([key, itemConfig]) => {
-    const color = (itemConfig.theme && itemConfig.theme[theme]) || itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
-  })
-  .join("\n")}
+              .map(([key, itemConfig]) => {
+                const color = (itemConfig.theme && itemConfig.theme[theme]) || itemConfig.color;
+                return color ? `  --color-${key}: ${color};` : null;
+              })
+              .join("\n")}
 }
 `)
-          .join("\n"),
+          .join("\n")),
       }}
     />
   );

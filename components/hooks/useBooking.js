@@ -27,6 +27,21 @@ export const useBooking = () => {
     []
   );
 
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+  const fetchCsrfToken = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/csrf-token`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.csrfToken;
+      }
+    } catch (error) {
+      console.error("Failed to fetch CSRF token:", error);
+    }
+    return null;
+  };
+
   // 🟡 Apply Coupon
   const applyCoupon = async () => {
     const code = bookingState.couponCode.trim();
@@ -35,7 +50,11 @@ export const useBooking = () => {
     setApplyingCoupon(true);
 
     try {
-      const response = await axios.post(`/api/booking/${customerId}/coupon/${code}`);
+      const csrfToken = await fetchCsrfToken();
+      const response = await axios.post(`/api/booking/${customerId}/coupon/${code}`, {}, {
+        headers: { 'X-CSRF-Token': csrfToken },
+        withCredentials: true
+      });
 
       const data = response?.data;
       console.log("✅ Backend result:", data);
@@ -206,9 +225,15 @@ export const useBooking = () => {
         formData.append("files", file, file.name);
       });
 
+      const csrfToken = await fetchCsrfToken();
+
       const response = await fetch(`/api/booking/${profile?._id}`, {
         method: "POST",
         body: formData,
+        headers: {
+          'X-CSRF-Token': csrfToken
+        },
+        credentials: 'include'
       });
 
       if (!response.ok) {
