@@ -3,7 +3,6 @@
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, Suspense } from 'react';
-import DOMPurify from 'dompurify';
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA4_MEASUREMENT_ID;
 
@@ -25,7 +24,10 @@ export const pageview = (url, additionalParams = {}) => {
 // Helper function to send custom events
 export const event = (action, params = {}) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', action, params);
+    window.gtag('event', action, {
+      ...params,
+      transport: 'beacon'
+    });
   }
 };
 
@@ -148,7 +150,7 @@ export default function GoogleAnalytics() {
         id="google-analytics-init"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(`
+          __html: `
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
@@ -157,7 +159,7 @@ export default function GoogleAnalytics() {
               send_page_view: false,
               anonymize_ip: true
             });
-          `)
+          `
         }}
       />
 
