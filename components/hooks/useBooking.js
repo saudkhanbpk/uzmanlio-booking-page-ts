@@ -51,7 +51,7 @@ export const useBooking = () => {
 
     try {
       const csrfToken = await fetchCsrfToken();
-      const response = await axios.post(`/api/booking/${customerId}/coupon/${code}`, {}, {
+      const response = await axios.post(`/api/booking/${customerId}/coupon/${code}?expertId=${params.expertID}`, {}, {
         headers: { 'X-CSRF-Token': csrfToken },
         withCredentials: true
       });
