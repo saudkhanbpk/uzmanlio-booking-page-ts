@@ -1,4 +1,15 @@
 import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+
+const logFile = path.resolve(process.cwd(), "api_debug.log");
+const log = (msg) => {
+  const line = `[${new Date().toISOString()}] ${msg}\n`;
+  try {
+    fs.appendFileSync(logFile, line);
+  } catch (e) { }
+  console.log(msg);
+};
 // import { useParams } from "next/navigation";
 // const params = useParams();
 
@@ -6,10 +17,12 @@ import { NextResponse } from "next/server";
  * Handles booking creation (proxy to backend)
  */
 export async function POST(request, context) {
+  log(`📡 [Parent API] Received request at ${request.url}`);
   try {
-    // ✅ Safely await params
-    const customerId = '68e7954a320f4a8884336346';
-    console.log("🌳 Received customerId:", customerId);
+    // Next.js 15+ requires awaiting params
+    const params = await context.params;
+    const customerId = params.customerId;
+    log(`🌳 [Parent API] Received customerId: ${customerId}`);
 
     // ✅ Parse incoming form data
     const formData = await request.formData();
@@ -128,6 +141,8 @@ export async function POST(request, context) {
 /**
  * Handle disallowed methods (GET, PUT, DELETE, etc.)
  */
-export async function GET() {
-  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
+export async function GET(request, context) {
+  const params = await context.params;
+  console.log("📡 [Parent API] GET hit for customerId:", params.customerId);
+  return NextResponse.json({ message: "Parent Booking API is working", customerId: params.customerId });
 }
