@@ -25,3 +25,12 @@
 [2026-01-08T07:17:32.386Z] ✅ [Next.js API] Backend result: {"type":"percentage","value":10,"code":"11111"}
 [2026-01-08T07:17:39.142Z] 📡 [Parent API] Received request at http://localhost:3000/api/booking/69527293c8b113aa7c436b0a
 [2026-01-08T07:17:39.151Z] 🌳 [Parent API] Received customerId: 69527293c8b113aa7c436b0a
+[2026-01-08T07:35:52.653Z] 🚀 [Next.js API] Coupon validation request received
+[2026-01-08T07:35:52.658Z] 📦 [Next.js API] Params - customerId: fbbc63c9-4df2-40d1-9698-f15f077b132e, couponCode: 11111
+[2026-01-08T07:35:52.670Z] 📨 [Next.js API] Request body: {}
+[2026-01-08T07:35:52.673Z] 🔗 [Next.js API] Forwarding to backend: http://localhost:4000/api/booking/customers/fbbc63c9-4df2-40d1-9698-f15f077b132e/validate-coupon
+[2026-01-08T07:35:52.676Z] 📡 [Next.js API] Payload: {"customerId":"fbbc63c9-4df2-40d1-9698-f15f077b132e","couponCode":"11111","expertId":"69527293c8b113aa7c436b0a"}
+[2026-01-08T07:35:52.903Z] 📥 [Next.js API] Backend response status: 200
+[2026-01-08T07:35:52.906Z] ✅ [Next.js API] Backend result: {"type":"percentage","value":10,"code":"11111"}
+[2026-01-08T07:35:57.711Z] 📡 [Parent API] Received request at http://localhost:3000/api/booking/69527293c8b113aa7c436b0a
+[2026-01-08T07:35:57.715Z] 🌳 [Parent API] Received customerId: 69527293c8b113aa7c436b0a
